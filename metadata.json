@@ -1,0 +1,6 @@
+{
+  "name": "AuditPulse",
+  "description": "Comprehensive SEO audit tool and live organic traffic analytics with real-time site crawling, DataForSEO metrics, and performance visualizer.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
