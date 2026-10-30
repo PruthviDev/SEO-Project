@@ -1,62 +1,22 @@
-<div align="center">
-  <img width="1200" height="475" alt="AuditPulse Banner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+# AuditPulse — SEO Intelligence Suite
 
-  <h1>AuditPulse — SEO Intelligence Suite</h1>
-  <p>Full-stack SEO audit tool powered by DataForSEO Live Organic Traffic APIs and Google Gemini AI</p>
-
-  ![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)
-  ![TypeScript](https://img.shields.io/badge/TypeScript-5%2B-blue)
-  ![React](https://img.shields.io/badge/React-19-61DAFB)
-  ![Vite](https://img.shields.io/badge/Vite-8-purple)
-  ![License](https://img.shields.io/badge/License-MIT-yellow)
-</div>
-
----
-
-## What is AuditPulse?
-
-AuditPulse is a modern, full-stack SEO audit platform that crawls any public website and delivers a comprehensive health report — including on-page diagnostics, live organic traffic data from DataForSEO, and an exportable executive report. It runs as a single Express + Vite server with a React frontend.
+A full-stack SEO audit platform that crawls any public website and delivers a complete health report with live organic traffic data, page diagnostics, and an exportable executive report.
 
 ---
 
 ## Features
 
-### SEO Crawler & Diagnostics
-- Crawls any public URL and performs deep on-page SEO analysis
-- Detects missing or short/long `<title>` tags
-- Checks for missing or thin meta descriptions
-- Validates `<h1>` heading presence and uniqueness
-- Identifies missing canonical tags
-- Counts images missing `alt` attributes
-- Measures server response time and flags slow TTFB (>1500ms)
-- Calculates an overall SEO health score (0–100)
-
-### Live Organic Traffic Dashboard
-- Integrates with DataForSEO Live Organic Search API
-- Displays real-time keyword rankings and organic traffic estimates
-- Supports location and language filtering (default: US English)
-- Per-user daily call limits and budget guards to control API costs
-- Built-in response caching to minimize redundant API calls
-
-### Page Hierarchy & Tag Inspector
-- Displays full structural breakdown of each audited page
-- Shows H1/H2 headings, meta description, canonical URL
-- Reports word count, internal links, external links, and missing alt images
-- Page load time and HTTP status per URL
-
-### Executive Report Export
-- Generates a printable/exportable audit report
-- Summarizes critical issues, warnings, and notices
-- Designed for sharing with clients or stakeholders
-
-### Authentication & Security
-- Demo session token auto-generated on first load
-- JWT-based session authentication for API endpoints
-- SSRF protection — blocks crawling of private/internal IPs and localhost
-- Per-user API usage tracking and rate limiting
-
-### AI Integration
-- Powered by Google Gemini AI (`@google/genai`) for intelligent insights
+- **SEO Health Score** — calculates a 0–100 score based on on-page issues found during crawl
+- **On-Page Diagnostics** — detects missing/short/long title tags, missing meta descriptions, missing or duplicate H1 tags, missing canonical tags, images without alt text, and slow server response time
+- **Live Organic Traffic Dashboard** — pulls real-time keyword rankings and traffic estimates via DataForSEO API with location and language filtering
+- **Page Hierarchy Inspector** — shows H1/H2 headings, meta description, canonical URL, word count, internal/external link counts, and missing alt image count per page
+- **Executive Report Export** — generates a printable audit summary for clients or stakeholders
+- **SSRF Protection** — blocks crawling of private IPs, localhost, and internal hostnames
+- **API Cost Controls** — per-user daily call limits and budget caps to prevent runaway DataForSEO spend
+- **Response Caching** — in-memory cache layer to avoid duplicate API calls
+- **JWT Session Auth** — demo token auto-generated on first load, used to authenticate traffic API requests
+- **AI Integration** — Google Gemini AI via `@google/genai`
+- **PostgreSQL or JSON DB** — uses PostgreSQL if `DATABASE_URL` is set, falls back to a local JSON file
 
 ---
 
@@ -66,9 +26,9 @@ AuditPulse is a modern, full-stack SEO audit platform that crawls any public web
 |---|---|
 | Frontend | React 19, TypeScript, Tailwind CSS v4, Recharts, Framer Motion |
 | Backend | Node.js, Express, TypeScript, tsx |
-| Build Tool | Vite 8 |
-| Database | PostgreSQL (optional) or local JSON fallback |
-| SEO Data | DataForSEO API |
+| Build | Vite 8, esbuild |
+| Database | PostgreSQL (optional) / JSON file fallback |
+| SEO Data | DataForSEO Live Organic API |
 | AI | Google Gemini API |
 | Testing | Vitest |
 
@@ -78,25 +38,27 @@ AuditPulse is a modern, full-stack SEO audit platform that crawls any public web
 
 ```
 SEO Project/
-├── src/                        # React frontend
+├── src/                          # React frontend
 │   ├── components/
 │   │   ├── TrafficDashboard.tsx  # Live organic traffic UI
-│   │   ├── Visualizer.tsx        # Audit overview & score visualizer
+│   │   ├── Visualizer.tsx        # Audit overview & score chart
 │   │   └── ReportExport.tsx      # Executive report export
 │   ├── types/seo.ts              # Shared TypeScript types
-│   └── App.tsx                   # Main app entry
+│   └── App.tsx                   # Main app component
 ├── server/
 │   └── src/
 │       ├── integrations/
 │       │   └── dataforseo.ts     # DataForSEO API client
 │       ├── services/
-│       │   ├── traffic.ts        # Traffic fetch + caching logic
-│       │   └── cache.ts          # In-memory cache layer
-│       ├── app.ts                # Express routes
+│       │   ├── traffic.ts        # Traffic fetch + caching
+│       │   └── cache.ts          # In-memory cache
+│       ├── app.ts                # Express API routes
 │       ├── auth.ts               # JWT session auth
 │       ├── crawler.ts            # SEO crawler & HTML parser
-│       └── db.ts                 # Database (PostgreSQL / JSON)
-├── server.ts                     # Server entry point (Express + Vite)
+│       └── db.ts                 # Database layer
+├── test/
+│   └── traffic.test.ts
+├── server.ts                     # Entry point (Express + Vite)
 ├── vite.config.ts
 ├── package.json
 └── .env.example
@@ -107,21 +69,22 @@ SEO Project/
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 18+
 - npm
 
-### 1. Install Dependencies
+### 1. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 2. Configure Environment Variables
+### 2. Set up environment variables
 
-Copy `.env.example` to `.env.local` and fill in your keys:
+Copy `.env.example` to `.env` and fill in your values:
 
 ```bash
-cp .env.example .env.local
+copy .env.example .env
 ```
 
 | Variable | Required | Description |
@@ -129,40 +92,41 @@ cp .env.example .env.local
 | `GEMINI_API_KEY` | ✅ | Google Gemini API key |
 | `DATAFORSEO_LOGIN` | ✅ | DataForSEO account login |
 | `DATAFORSEO_PASSWORD` | ✅ | DataForSEO account password |
-| `DATAFORSEO_SANDBOX` | Optional | Set `true` to use sandbox mode (no real API cost) |
-| `DFS_DAILY_CALLS_PER_USER` | Optional | Max daily API calls per user (default: 30) |
+| `DATAFORSEO_SANDBOX` | Optional | `true` to use sandbox (no real cost) |
+| `DFS_DAILY_CALLS_PER_USER` | Optional | Max API calls per user per day (default: 30) |
 | `DFS_DAILY_BUDGET_USD` | Optional | Max daily spend in USD (default: $5) |
-| `DATABASE_URL` | Optional | PostgreSQL connection string (uses JSON file if not set) |
+| `DATABASE_URL` | Optional | PostgreSQL connection string |
 | `PORT` | Optional | Server port (default: 3000) |
 
-### 3. Run Locally
+### 3. Run locally
 
 ```bash
 npm run dev
 ```
 
-App runs at: `http://localhost:3000`
+Open `http://localhost:3000`
 
 ---
 
-## How to Use
+## Usage
 
-1. Open the app in your browser
-2. Enter any public website URL in the search bar (e.g. `https://stripe.com`)
-3. Click **Audit Website** — the crawler will analyze the page
-4. Switch between tabs:
-   - **Audit Overview** — SEO health score and issue breakdown
-   - **Live Organic Traffic** — real-time keyword and traffic data from DataForSEO
-   - **Page Hierarchy & Tags** — detailed structural inspection
-   - **Executive Report** — printable summary for clients
+1. Enter any public website URL in the search bar (e.g. `https://stripe.com`)
+2. Click **Audit Website**
+3. Navigate between tabs:
+   - **Audit Overview** — SEO score and full issue breakdown
+   - **Live Organic Traffic** — real-time keyword and traffic data
+   - **Page Hierarchy & Tags** — structural page inspection
+   - **Executive Report** — printable client-ready summary
+
+Quick sample domains are available on the homepage for instant demo audits.
 
 ---
 
-## Available Scripts
+## Scripts
 
 | Command | Description |
 |---|---|
-| `npm run dev` | Start development server (Express + Vite HMR) |
+| `npm run dev` | Start dev server with Vite HMR |
 | `npm run build` | Build frontend for production |
 | `npm start` | Start production server |
 | `npm test` | Run tests with Vitest |
@@ -170,42 +134,52 @@ App runs at: `http://localhost:3000`
 
 ---
 
+## API Endpoints
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/api/health` | No | Health check |
+| `POST` | `/api/auth/demo` | No | Generate demo session token |
+| `GET` | `/api/auth/me` | Yes | Get current user |
+| `POST` | `/api/seo/crawl` | No | Run SEO audit on a URL |
+| `GET` | `/api/seo/traffic?url=` | Yes | Fetch live organic traffic data |
+
+---
+
 ## Deployment
 
-### Build for Production
+### Production build
 
 ```bash
+npm run build
+set NODE_ENV=production && npm start
+```
+
+### Railway (recommended)
+
+1. Push to GitHub
+2. Connect repo on [railway.app](https://railway.app)
+3. Add environment variables in the Railway dashboard
+4. Railway auto-deploys on every push — no config needed
+
+### AWS EC2
+
+```bash
+# On your EC2 instance
+npm install
 npm run build
 NODE_ENV=production npm start
 ```
 
-### Deploy to Railway
+To SSH into EC2 from Windows PowerShell:
 
-1. Push to GitHub
-2. Connect repo on [railway.app](https://railway.app)
-3. Set environment variables in Railway dashboard
-4. Railway auto-deploys on every push
+```powershell
+# Set correct permissions on your .pem key
+icacls "Pruthvi.pem" /inheritance:r /grant:r "$($env:USERNAME):(R)"
 
-### Deploy to AWS EC2
-
-```bash
-# On your server
-npm install
-npm run build
-NODE_ENV=production PORT=3000 npm start
+# Connect
+ssh -i "Pruthvi.pem" ec2-user@<your-ec2-public-ip>
 ```
-
----
-
-## API Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/health` | Health check |
-| `POST` | `/api/auth/demo` | Generate demo session token |
-| `GET` | `/api/auth/me` | Get current authenticated user |
-| `POST` | `/api/seo/crawl` | Run SEO audit on a URL |
-| `GET` | `/api/seo/traffic?url=` | Fetch live organic traffic data |
 
 ---
 
